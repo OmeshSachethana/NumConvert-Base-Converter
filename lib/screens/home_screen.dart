@@ -17,12 +17,16 @@ class _HomeScreenState extends State<HomeScreen> {
   String fromBase = 'Decimal';
   String toBase = 'Binary';
   String result = '';
+  String steps = '';
 
   void convert() async {
     final input = _controller.text.trim();
-    final output = BaseConverter.convert(input, fromBase, toBase);
-    setState(() => result = output);
-    await HistoryStorage.addHistory('$input ($fromBase)', '$output ($toBase)');
+    final map = BaseConverter.convertWithSteps(input, fromBase, toBase);
+    setState(() {
+      result = map['result'] ?? '';
+      steps = map['steps'] ?? '';
+    });
+    await HistoryStorage.addHistory('$input ($fromBase)', '$result ($toBase)');
   }
 
   @override
@@ -30,35 +34,86 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Base Converter')),
       drawer: const DrawerWidget(),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: _controller,
-              keyboardType: TextInputType.text,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Enter Number',
+
+      // ✅ Place banner outside scrollable content
+      body: Stack(
+        children: [
+          // Scrollable main content
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 80), // bottom padding for banner
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: _controller,
+                    keyboardType: TextInputType.text,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Enter Number',
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildDropdown(
+                          'From',
+                          fromBase,
+                          (v) => setState(() => fromBase = v!),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _buildDropdown(
+                          'To',
+                          toBase,
+                          (v) => setState(() => toBase = v!),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: convert,
+                      child: const Text('Convert'),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  if (result.isNotEmpty) ...[
+                    Text(
+                      'Result: $result',
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    ExpansionTile(
+                      title: const Text('How it works'),
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          child: SelectableText(
+                            steps,
+                            style: const TextStyle(fontFamily: 'monospace'),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  ],
+                ],
               ),
             ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(child: _buildDropdown('From', fromBase, (v) => setState(() => fromBase = v!))),
-                const SizedBox(width: 10),
-                Expanded(child: _buildDropdown('To', toBase, (v) => setState(() => toBase = v!))),
-              ],
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(onPressed: convert, child: const Text('Convert')),
-            const SizedBox(height: 10),
-            if (result.isNotEmpty)
-              Text('Result: $result', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const Spacer(),
-            const AdBanner(),
-          ],
-        ),
+          ),
+
+          // ✅ Fixed Ad Banner at bottom
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: AdBanner(),
+          ),
+        ],
       ),
     );
   }
