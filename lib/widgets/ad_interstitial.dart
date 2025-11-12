@@ -11,7 +11,7 @@ class AdInterstitial {
   /// Call this method after each conversion
   static void handleConversion(BuildContext context) {
     _conversionCount++;
-    if (_conversionCount % 4 == 0) {
+    if (_conversionCount % 5 == 0) {
       _loadAndShowAd(context);
     }
   }

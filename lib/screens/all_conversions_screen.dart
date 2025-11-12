@@ -24,7 +24,7 @@ class _AllConversionsScreenState extends State<AllConversionsScreen> {
       results = BaseConverter.convertAll(input, fromBase);
     });
 
-    // Show interstitial ad every 3 conversions
+    // Show interstitial ad every 5 conversions
     AdInterstitial.handleConversion(context);
   }
 

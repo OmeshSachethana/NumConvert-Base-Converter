@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     await HistoryStorage.addHistory('$input ($fromBase)', '$result ($toBase)');
 
-    // Show interstitial ad every 3 conversions
+    // Show interstitial ad every 5 conversions
     AdInterstitial.handleConversion(context);
   }
 
