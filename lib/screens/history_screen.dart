@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/drawer_widget.dart';
 import '../utils/history_storage.dart';
+import '../widgets/ad_banner.dart'; // Import the ad banner
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -44,91 +45,105 @@ class _HistoryScreenState extends State<HistoryScreen> {
         ],
       ),
       drawer: const DrawerWidget(),
-      body: history.isEmpty
-          ? _buildEmptyState()
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Recent Conversions',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Expanded(
-                    child: Card(
-                      elevation: 2,
-                      child: ListView.separated(
-                        itemCount: history.length,
-                        separatorBuilder: (context, index) => const Divider(height: 1),
-                        itemBuilder: (context, index) {
-                          final item = history[index];
-                          return Dismissible(
-                            key: Key(item['time']),
-                            background: Container(
-                              color: Theme.of(context).colorScheme.error,
-                              alignment: Alignment.centerRight,
-                              padding: const EdgeInsets.only(right: 20),
-                              child: const Icon(Icons.delete, color: Colors.white),
-                            ),
-                            onDismissed: (direction) async {
-                              await HistoryStorage.removeHistoryItem(index);
-                              loadHistory();
-                            },
-                            child: ListTile(
-                              leading: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.history,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                              title: RichText(
-                                text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
-                                  children: [
-                                    TextSpan(
-                                      text: item['input'],
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    const TextSpan(text: ' → '),
-                                    TextSpan(
-                                      text: item['output'],
-                                      style: TextStyle(
+      body: Column(
+        children: [
+          // Main content area - takes all available space except banner
+          Expanded(
+            child: history.isEmpty
+                ? _buildEmptyState()
+                : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Recent Conversions',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Expanded(
+                          child: Card(
+                            elevation: 2,
+                            child: ListView.separated(
+                              itemCount: history.length,
+                              separatorBuilder: (context, index) => const Divider(height: 1),
+                              itemBuilder: (context, index) {
+                                final item = history[index];
+                                return Dismissible(
+                                  key: Key(item['time']),
+                                  background: Container(
+                                    color: Theme.of(context).colorScheme.error,
+                                    alignment: Alignment.centerRight,
+                                    padding: const EdgeInsets.only(right: 20),
+                                    child: const Icon(Icons.delete, color: Colors.white),
+                                  ),
+                                  onDismissed: (direction) async {
+                                    await HistoryStorage.removeHistoryItem(index);
+                                    loadHistory();
+                                  },
+                                  child: ListTile(
+                                    leading: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.history,
                                         color: Theme.of(context).colorScheme.primary,
-                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                              subtitle: Text(
-                                item['time'],
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.outline,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.arrow_forward_ios,
-                                size: 16,
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
+                                    title: RichText(
+                                      text: TextSpan(
+                                        style: DefaultTextStyle.of(context).style,
+                                        children: [
+                                          TextSpan(
+                                            text: item['input'],
+                                            style: const TextStyle(fontWeight: FontWeight.bold),
+                                          ),
+                                          const TextSpan(text: ' → '),
+                                          TextSpan(
+                                            text: item['output'],
+                                            style: TextStyle(
+                                              color: Theme.of(context).colorScheme.primary,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      item['time'],
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.outline,
+                                      ),
+                                    ),
+                                    trailing: Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 16,
+                                      color: Theme.of(context).colorScheme.outline,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
+          ),
+          
+          // Fixed bottom banner
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: const AdBanner(),
+          ),
+        ],
+      ),
     );
   }
 
