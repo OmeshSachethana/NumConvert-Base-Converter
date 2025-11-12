@@ -58,7 +58,7 @@ class DrawerWidget extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Navigation Items
           Expanded(
             child: Padding(
@@ -89,11 +89,19 @@ class DrawerWidget extends StatelessWidget {
                     'Settings',
                     '/settings',
                   ),
+                  const Spacer(),
+                  const Divider(height: 1),
+                  _buildDrawerItem(
+                    context,
+                    Icons.privacy_tip_outlined,
+                    'Privacy Policy',
+                    '/privacy',
+                  ),
                 ],
               ),
             ),
           ),
-          
+
           // Footer
           Container(
             padding: const EdgeInsets.all(16),
@@ -117,11 +125,11 @@ class DrawerWidget extends StatelessWidget {
     String route,
   ) {
     final isCurrentRoute = ModalRoute.of(context)?.settings.name == route;
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: isCurrentRoute 
+        color: isCurrentRoute
             ? Theme.of(context).colorScheme.primaryContainer.withOpacity(0.2)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
@@ -129,7 +137,7 @@ class DrawerWidget extends StatelessWidget {
       child: ListTile(
         leading: Icon(
           icon,
-          color: isCurrentRoute 
+          color: isCurrentRoute
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
         ),
@@ -137,7 +145,7 @@ class DrawerWidget extends StatelessWidget {
           title,
           style: TextStyle(
             fontWeight: isCurrentRoute ? FontWeight.bold : FontWeight.normal,
-            color: isCurrentRoute 
+            color: isCurrentRoute
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onSurface,
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:num_convert/screens/privacy_policy.dart';
 import 'package:num_convert/services/theme_service.dart';
 import 'package:num_convert/screens/all_conversions_screen.dart';
 import 'package:num_convert/screens/history_screen.dart';
@@ -52,6 +53,8 @@ class _NumConvertAppState extends State<NumConvertApp> {
         '/history': (_) => const HistoryScreen(),
         '/all': (_) => const AllConversionsScreen(),
         '/settings': (_) => SettingsScreen(onThemeChanged: toggleTheme),
+        '/privacy': (_) => const PrivacyPolicyScreen(),
+
       },
     );
   }
