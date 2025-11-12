@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/ad_banner.dart';
+import '../widgets/ad_interstitial.dart';
 import '../utils/converter.dart';
 import '../utils/history_storage.dart';
 
@@ -21,12 +22,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void convert() async {
     final input = _controller.text.trim();
+    if (input.isEmpty) return;
+
     final map = BaseConverter.convertWithSteps(input, fromBase, toBase);
     setState(() {
       result = map['result'] ?? '';
       steps = map['steps'] ?? '';
     });
     await HistoryStorage.addHistory('$input ($fromBase)', '$result ($toBase)');
+
+    // Show interstitial ad every 3 conversions
+    AdInterstitial.handleConversion(context);
   }
 
   @override
@@ -34,14 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Base Converter')),
       drawer: const DrawerWidget(),
-
-      // ✅ Place banner outside scrollable content
       body: Stack(
         children: [
-          // Scrollable main content
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 80), // bottom padding for banner
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -84,7 +87,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (result.isNotEmpty) ...[
                     Text(
                       'Result: $result',
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     ExpansionTile(
@@ -93,10 +99,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(12),
-                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          color:
+                              Theme.of(context).colorScheme.surfaceVariant,
                           child: SelectableText(
                             steps,
-                            style: const TextStyle(fontFamily: 'monospace'),
+                            style:
+                                const TextStyle(fontFamily: 'monospace'),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -108,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // ✅ Fixed Ad Banner at bottom
+          // Fixed Ad Banner at bottom
           const Align(
             alignment: Alignment.bottomCenter,
             child: AdBanner(),
@@ -118,7 +126,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDropdown(String label, String value, Function(String?) onChanged) {
+  Widget _buildDropdown(
+    String label,
+    String value,
+    Function(String?) onChanged,
+  ) {
     return DropdownButtonFormField<String>(
       value: value,
       decoration: InputDecoration(labelText: label),

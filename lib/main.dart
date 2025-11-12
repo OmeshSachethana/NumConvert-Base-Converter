@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:num_convert/screens/all_conversions_screen.dart';
 import 'package:num_convert/screens/history_screen.dart';
