@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:num_convert/services/theme_service.dart';
 import 'package:num_convert/screens/all_conversions_screen.dart';
 import 'package:num_convert/screens/history_screen.dart';
 import 'package:num_convert/screens/home_screen.dart';
@@ -20,9 +21,23 @@ class NumConvertApp extends StatefulWidget {
 }
 
 class _NumConvertAppState extends State<NumConvertApp> {
-  bool isDarkMode = false;
+  bool isDarkMode = true;
 
-  void toggleTheme(bool value) {
+  @override
+  void initState() {
+    super.initState();
+    _loadThemePreference();
+  }
+
+  Future<void> _loadThemePreference() async {
+    final savedTheme = await ThemeService.isDarkMode();
+    setState(() {
+      isDarkMode = savedTheme;
+    });
+  }
+
+  void toggleTheme(bool value) async {
+    await ThemeService.setDarkMode(value);
     setState(() => isDarkMode = value);
   }
 
