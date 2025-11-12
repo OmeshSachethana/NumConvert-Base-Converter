@@ -7,10 +7,29 @@ class DrawerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
+        padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.deepPurple),
-            child: Text('NumConvert', style: TextStyle(color: Colors.white, fontSize: 22)),
+          DrawerHeader(
+            decoration: const BoxDecoration(color: Colors.deepPurple),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // App logo
+                Image.asset(
+                  'assets/numconvert_transparent.png',
+                  height: 80,
+                ),
+                const SizedBox(height: 5),
+                const Text(
+                  'NumConvert',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.calculate),
